@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 2: Characterizing Molten Salt Simulants</title>
+    <link rel="stylesheet" href="assets/css/main.css"> <!-- Reuse your existing CSS -->
+    <style>
+        /* Styling the toolbar with dark gray color */
+        .toolbar {
+            background-color: #333333; /* Dark gray color */
+            overflow: hidden;
+            padding: 10px; /* Optional padding */
+        }
+
+        .toolbar a {
+            float: left;
+            display: block;
+            color: white; /* Text color */
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .toolbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Justify text in the sidebar or project description section */
+        .project-description p, .project-description h1 {
+            text-align: justify;
+        }
+
+        /* Optional: Some custom styles for readability */
+        h2 {
+            margin-top: 20px;
+        }
+        p, pre {
+            margin-bottom: 20px;
+        }
+        .methods, .description, .results, .takeaways, .future-work {
+            margin-bottom: 40px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Toolbar for navigation -->
+    <div class="toolbar">
+        <a href="index.html">Home</a>
+        <!-- Add other navigation links here if needed -->
+    </div>
+
+    <!-- Project Title and Overview -->
+    <section id="header">
+        <header class="project-description"> <!-- Added class "project-description" -->
+            <h1>Molecular-dynamics-free extraction of the bonding dynamics in molten salt nuclear reactor simulants</h1>
+            <p>
+                This project, conducted with the DOE-funded Molten Salts in Extreme Environments Energy Frontier Research Center (MSEE EFRC), aimed to develop advanced methods for characterizing molten salt simulants used in nuclear reactors. The goal was to enhance our understanding of the structure of these materials, improving their performance under extreme conditions to advance nuclear reactor safety and sustainable energy solutions.
+            </p>
+        </header>
+    </section>
+
+    <!-- Key Challenges -->
+    <section class="description">
+        <div class="container project-description"> <!-- Added class "project-description" -->
+            <h2>Description</h2>
+            <p>
+                Molten salts are a key component of next-generation nuclear reactors, offering improved safety and efficiency compared to traditional reactor designs. However, characterizing the structure of these materials under extreme conditions is challenging due to their disordered nature and complex bonding dynamics.
+            </p>
+            <p>
+                Experimental methods for analyzing molten salts, such as X-ray absorption spectroscopy, are limited in their ability to provide detailed structural information, due to the lack of viable ab initio molecular dynamics simulations. To address this challenge, I developed a novel approach that combines machine learning techniques with experimental data to extract the bonding dynamics in molten salt simulants without relying on molecular dynamics simulations.
+            </p>
+        </div>
+    </section>
+
+<!-- Methods -->
+<section class="methods">
+    <div class="container project-description">
+        <h2>Methods</h2>
+
+        <!-- Figure and Caption -->
+        <div style="text-align: center;"></div>
+            <figure>
+                <img src="images/moltensalts_pipeline.png" alt="Machine Learning Solution for Disordered Materials" style="width: 1000px; height: auto;" />
+                <figcaption style="text-align: justify;">
+                    Figure 1: The pipeline. Given simple instructions from the user regarding the minimum bond distance and chemical speciation, countless structures are created with varied interatomic distances and local compositions. Spectra are simulated on these structures, and the radial distribution descriptor is calculated. A neural network is trained to map the spectrum to the radial distribution function.
+                </figcaption>
+            </figure>
+
+        <br>
+
+        <!-- Questions and Bullet Points -->
+        <h3>Why does this work?</h3>
+        <ul>
+            <li>
+                <strong>The spectrum is fundamentally related to the radial distribution function:</strong><br>
+                The spectrum, \( \chi(k) \), is related to the radial distribution function \( g(r) \) through the following integral:
+                \[
+                \chi(k) = S_0^2 \int_a^b A(k,r) \frac{1}{r^2} \sin\left(2kr + \delta(k,r)\right) g(r) \, dr
+                \]
+                Where:
+                <ul>
+                    <strong>\( S_0^2 \)</strong> is the passive electron reduction factor.<br>
+                    <strong>\( A(k,r) \)</strong> is the photoelectron scattering function, which includes inelastic losses.<br>
+                    <strong>\( \delta(k,r) \)</strong> is the phase shift of the photoelectron.<br>
+                    <strong>\( g(r) \)</strong> is the unknown pair distribution function of the nearest neighbors to the X-ray absorbing atoms, describing the probability distribution of interatomic distances.<br>
+                </ul>
+                The pair distribution function \( g(r) \) is normalized by the condition:
+                \[
+                \int_a^b g(r) \, dr = N
+                \]
+                Here, \( N \) represents the number of neighboring atoms within the distance range \( a < r < b \), corresponding to the given atomic shell. The equation can also be modified to include multiple scattering contributions by replacing \( g(r) \) with corresponding many-atom distribution functions.
+            </li>
+            <br>
+            <li>
+                <strong>Theoretical simulations of EXAFS - the X-ray spectra used in this project- are very accurate, and can be done on any atomic coordinates:</strong>
+                Therefore, we can learn the spectrum-structure relationship from a large dataset of simulated spectra and corresponding atomic coordinates, even if the configurations are not physically realistic.
+            </li><br>
+            <li>
+                <strong>There are many possible configurations of atoms, but we can simplify the configuration space by defining a distribution of possible lengths that the interatomic distances can take.</strong><br>
+                Bond length distributions are defined by absorber-neighbor pair lengths for each coordination shell and for each scatterer type if multiple elements are present. This is described using continuous random variables (CRVs).
+                <ul>
+                    <li>
+                        A CRV for each shell is denoted as \( v_{n,e} \), where \( n \) represents the neighbor shell index and \( e \) the scattering element.
+                    </li>
+                    <li>
+                        These CRVs, collectively referred to as the "macrostate", each follow a probability density function given by:
+                        \[
+                        f_n(x | \mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} \exp \left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
+                        \]
+                    </li>
+                    <li>
+                        They are organized into sets \( V_e = \{v_{1,e}, v_{2,e}, \ldots\} \), where \( V_e \) represents the macrostate with adjustable mean \( \mu_n \) and standard deviation \( \sigma_n \).
+                    </li>
+                    <li>
+                        To generate structures, \( N_n \) pair-lengths, corresponding to the number of neighbors per shell \( n \), are sampled from each CRV of the macrostate to create a list of absorber-neighbor pairs known as the "microstate".
+                    </li>
+                    <li>
+                        Finally, the pairs from the list are assembled into a 3D structural configuration for scattering calculations with FEFF.
+                    </li>
+                    <br>
+
+                    <li>
+                        <strong>Once we have a set of bonds, we can assemble them in space with a genetic algorithm.</strong><br>
+                        A genetic algorithm (GA) to creates the 3D structures, employing a customizable fitness function that takes into account constraints on bond lengths and coordination numbers, while also optimizing bond angles. The steps involved in the GA process are as follows:
+                        <ul>
+                            <li>
+                                The fitness function is designed to maximize the minimum pair distance between all atoms, ensuring that atoms are adequately separated in space.
+                            </li>
+                            <li>
+                                Since the distance to the central atom is held constant and only the bond angles are modified, the GA maintains spatial separation to prevent atoms from overlapping.
+                            </li>
+                            <li>
+                                By iterating through generations, the GA refines the atomic configuration, evolving toward an optimal 3D structure that satisfies the given constraints.
+                            </li>
+                        </ul>
+                    </li>
+                    
+
+                </ul>
+            </li>
+            
+            
+            
+
+        </ul>
+        
+        
+
+
+    </div>
+</section>
+
+
+
+    <!-- Key Takeaways -->
+    <section class="takeaways">
+        <div class="container project-description"> <!-- Added class "project-description" -->
+            <h2>Key Takeaways</h2>
+            <p>
+                The study employed statistical modeling, genetic algorithms, and real-space scattering codes to generate synthetic training data. The neural networks are trained on a wide range of synthetic material structures, empowering them to identify the structural characteristics of materials directly from experimental data without relying on pre-existing theoretical models.
+            </p>
+            <p>
+                This method enables the direct extraction of structural parameters from x-ray absorption spectra, bypassing the need for theoretical models. This innovation promises significant advances in understanding of materials for nuclear technologies.
+            </p>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <section id="footer">
+        <div class="container">
+            <ul class="copyright">
+                <li>&copy; Nick Marcella. All rights reserved.</li>
+            </ul>
+        </div>
+    </section>
+
+</body>
+</html>
