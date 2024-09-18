@@ -9,6 +9,50 @@
     <title>Project 2: Characterizing Molten Salt Simulants</title>
     <link rel="stylesheet" href="assets/css/main.css"> <!-- Reuse your existing CSS -->
     <style>
+    /* Ensuring all images are responsive */
+    img {
+        max-width: 100%;
+        height: auto; /* Maintains the aspect ratio */
+    }
+
+    /* Optional: Padding around the image */
+    figure {
+        margin: 0;
+        padding: 10px;
+    }
+
+    /* Responsive text */
+    body {
+        font-size: 16px; /* Base font size for desktops */
+    }
+
+    /* Media query for mobile devices */
+    @media only screen and (max-width: 768px) {
+        body {
+            font-size: 14px; /* Adjust font size for smaller screens */
+        }
+
+        /* Adjusting the layout of the container for better readability on mobile */
+        .project-description, .methods, .takeaways {
+            padding: 10px;
+        }
+
+        /* Ensure that large images scale down */
+        img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Adjust title font size */
+        h1 {
+            font-size: 24px;
+        }
+
+        /* Adjust h2 size */
+        h2 {
+            font-size: 20px;
+        }
+    }
         /* Styling the toolbar with dark gray color */
         .toolbar {
             background-color: #333333; /* Dark gray color */
