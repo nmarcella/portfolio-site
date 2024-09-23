@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 2: Characterizing Molten Salt Simulants</title>
+    <link rel="stylesheet" href="assets/css/main.css"> <!-- Reuse your existing CSS -->
+    <style>
+    /* Ensuring all images are responsive */
+    img {
+        max-width: 100%;
+        height: auto; /* Maintains the aspect ratio */
+    }
+
+    /* Optional: Padding around the image */
+    figure {
+        margin: 0;
+        padding: 10px;
+    }
+
+    /* Responsive text */
+    body {
+        font-size: 16px; /* Base font size for desktops */
+    }
+
+    /* Media query for mobile devices */
+    @media only screen and (max-width: 768px) {
+        body {
+            font-size: 14px; /* Adjust font size for smaller screens */
+        }
+
+        /* Adjusting the layout of the container for better readability on mobile */
+        .project-description, .methods, .takeaways {
+            padding: 10px;
+        }
+
+        /* Ensure that large images scale down */
+        img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Adjust title font size */
+        h1 {
+            font-size: 24px;
+        }
+
+        /* Adjust h2 size */
+        h2 {
+            font-size: 20px;
+        }
+    }
+        /* Styling the toolbar with dark gray color */
+        .toolbar {
+            background-color: #333333; /* Dark gray color */
+            overflow: hidden;
+            padding: 10px; /* Optional padding */
+        }
+
+        .toolbar a {
+            float: left;
+            display: block;
+            color: white; /* Text color */
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        .toolbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Justify text in the sidebar or project description section */
+        .project-description p, .project-description h1 {
+            text-align: justify;
+        }
+
+        /* Optional: Some custom styles for readability */
+        h2 {
+            margin-top: 20px;
+        }
+        p, pre {
+            margin-bottom: 20px;
+        }
+        .methods, .description, .results, .takeaways, .future-work {
+            margin-bottom: 40px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Toolbar for navigation -->
+    <div class="toolbar">
+        <a href="index.html">Home</a>
+        <!-- Add other navigation links here if needed -->
+    </div>
+
+    <!-- Project Title and Overview -->
+    <section id="header">
+        <header class="project-description"> <!-- Added class "project-description" -->
+            <h1>A pipeline for linking machine-learned force field-driven dynamic simulations with simulated and experimental spectroscopy</h1>
+            <p>
+                This project, funded by the Department of Energy, integrates machine-learned force field-driven molecular dynamics simulations with X-ray absorption experiments at DOE synchrotron facilities. The goal is to validated the MLFFs for simulating nanoparticle and nanoparticle-adsorbate interactions over reaction-relevant time scales. Once fully developed, MLFFs will enable fast and accurate materials simulations, which will dramatically accelerate the discovery of new materials for the energy sector and beyond.
+            </p>
+        </header>
+    </section>
+
+    <!-- Key Challenges -->
+    <section class="description">
+        <div class="container project-description"> <!-- Added class "project-description" -->
+            <h2>Description</h2>
+            <p>
+                Machine learned force fields (MLFFs) are extremely exciting tools capable of simulating materials systems from aa single atom to billions of atoms with quantum mechanical accuracy over nanoseconds to milliseconds. In principle, entire processes, for example catalytic reactions, can be modeled in one simulation. However, a method for the validation of the bonding dynamics that MLFFs produce is lacking. This project aims to address this challenge by developing a pipeline that links MLFF-driven dynamic simulations with simulated and experimental spectroscopy.
+            </p>
+            <p>
+                X-ray absorption spectroscopy (XAS) is appealing for this task because the XAS spectrum encodes "snapshots" of all atomic configurations around the absorbing atoms in the material. By calculating the XAS spectrum on molecular dynamics trajectories, it is possible to benchmark the MLFF that drives the MD trajectories. If the simulated XAS matches experiment, it is evidence that MLFF is accurately capturing the bonding dynamics of the material.
+            </p>
+        </div>
+    </section>
+
+<!-- Methods -->
+<section class="methods">
+    <div class="container project-description">
+        <h2>Methods</h2>
+
+        <!-- Figure and Caption -->
+        <div style="text-align: center;"></div>
+            <figure>
+                <img src="images/mlff2.png" alt="MLFF validation workflow" style="width: 1000px; height: auto;" />
+                <figcaption style="text-align: justify;">
+                    <strong>Figure 1.</strong> The pipeline. A machine-learned force field (MLFF) is trained on a high performance computing cluster using the FLARE framework. The MLFF is then used to drive a molecular dynamics (MD) simulation for the desired system. The resulting MD trajectory is transferred to a local or cloud-based computer for analysis via the data analysis package. This package is used to extract mechanistic information that can be correlated to the experimental analysis such as the evolution of coordination numbers or the radial distribution function (RDF) over time, and parameters that can be extracted the from the RDF such as mean and variance per coordination shell. The MD trajectory is also processed and sent to a HPC for spectral simulation (in this case, the Institutional Cluster of the Center for Functional Nanomaterials at Brookhaven National Lab). The simulation workflow is highly optimized for speed and storage efficiency in order to deal with large MD trajectories. The simulated spectra are then compared to experimental data to validate the MLFF.
+                </figcaption>
+            </figure>
+
+        <br>
+
+        <!-- Questions and Bullet Points -->
+        <h3>Why does this work?</h3>
+        <ul>
+            <li>
+                <strong>The X-ray absorption spectrum encodes the pair and many-body interactions up to about 6 angstroms from the absorbing atom:</strong><br>
+                The spectrum, \( \chi(k) \), is related to the radial distribution functions \( g(r)_n \), where \(n\) is the order, through the following integral*:
+                \[
+                \begin{aligned}
+                \langle \chi(k) \rangle = & \int_0^\infty dr \, 4\pi r^2 \rho g_2(r) \gamma^{(2)}(r,k) \\
+                & + \int dr_1 dr_2 d\phi \, 8\pi^2 r_1^2 r_2^2 \sin(\phi) \rho^2 g_3(r_1, r_2, \phi) \gamma^{(3)}(r_1, r_2, \phi, k) \\
+                & + \int dr_1 dr_2 dr_3 d\phi d\Omega \, 8\pi^3 r_1^2 r_2^2 r_3^2 \sin(\phi) \rho^3 g_4(r_1, r_2, \phi, r_3, \Omega) \gamma^{(4)}(r_1, r_2, \phi, r_3, \Omega, k) + \cdots 
+                \end{aligned}
+                \]
+
+                *A. Filipponi, A. Di Cicco, C. R. Natoli, Phys. Rev. B 52 (1995) 15122-15134.
+                <br>
+                Where: 
+                <ul>
+                        <strong>Pair distribution function:</strong> \( g_2(r) \) encodes the pair interactions.
+                    <br>
+                        <strong>Three-body distribution function:</strong> \( g_3(r_1, r_2, \phi) \) encodes the three-body interactions.
+                    <br>
+                        <strong>Four-body distribution function:</strong> \( g_4(r_1, r_2, \phi, r_3, \Omega) \) encodes the four-body interactions.
+                    
+                </ul>
+ 
+            </li>
+
+            <li>
+                <strong>The scattering between all interactions can be readily calculated on the molecular dynamics trajectories and \( \chi(k)_{\text{theory}} \) can be compared to \( \chi(k)_{\text{experiment}} \).</strong>
+                <div style="text-align: center;">
+                    <figure>
+                        <img src="images/scattering.png" alt="MLFF validation workflow" style="width: 200px; height: auto;" />
+                        <figcaption style="text-align: justify;">
+                            <strong>Figure 2.</strong>  Example of scattering paths taken from the lecture by Alexei Kuzmin. You can find more details in the presentation <a href="https://www.bnl.gov/xafscourse/files/presentations/kuzmin-1.pdf" target="_blank">here</a>.
+                        </figcaption>
+                    </figure>
+                </div>
+            </li>
+            
+            <li>
+                <strong>In some cases, the agreement is very good, i.e., \( \chi(k)_{\text{theory}} \) ~= \( \chi(k)_{\text{experiment}} \), but it depends on the theory used to train the MLFF.</strong>
+                <div style="text-align: center;">
+                    <figure>
+                        <img src="images/potentials.png" alt="MLFF validation workflow" style="width: 500px; height: auto;" />
+                        <figcaption style="text-align: justify;">
+                            <strong>Figure 3.</strong> The validation of MLFFs trained on PBE, LDA, and PBEsol DFT functionals for the simulation of Pt systems. The result is quantified by the euclidean distance between the simulated and experimental spectra. PBEsol does the best, followed by LDA, and then PBE. The differences in the dynamics are quantified by the MSRD (mean squared relative displacement of the interatomic distance), where the slope is correlated to the force constant.
+                        </figcaption>
+                    </figure>
+                </div>
+            </li>
+            
+            
+            
+
+            
+            
+            
+
+        </ul>
+        
+
+    </div>
+</section>
+
+
+
+    <!-- Key Takeaways -->
+    <section class="takeaways">
+        <div class="container project-description"> <!-- Added class "project-description" -->
+            <h2>Key Takeaways</h2>
+            <p>
+                Now that a method exists for validating MLFF dynamics, we are able to screen MLFFs for their ability to capture atomic mechanisms.
+            </p>
+
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <section id="footer">
+        <div class="container">
+            <ul class="copyright">
+                <li>&copy; Nick Marcella. All rights reserved.</li>
+            </ul>
+        </div>
+    </section>
+
+</body>
+</html>
